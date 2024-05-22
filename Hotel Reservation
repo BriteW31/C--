@@ -1,1 +1,809 @@
 
+#include <iostream>
+#include <string>
+#include <list>
+#include <iterator>
+#include <cmath>
+using namespace std;
+
+//global information
+const int maxNumOfRooms = 150;
+const int maxPeopleInRoom = 4;
+const int weeksInYear = 52;
+const int maxHotels = 10;
+string rooms[8] = { "Single", "Double", "Triple", "Quad",
+                   "Queen",  "King",   "Twin",   "Double-Double" }; //type of room
+double costsRooms[8] = { 50.00, 80.00,  100.00, 120.00,
+                        95.00, 100.00, 55.00,  100.00 }; //costs per night
+
+//important elements used
+enum Season { //enum for season
+    Spring,
+    Summer,
+    Autumn,
+    Winter
+};
+
+class Discount { //discount class
+public:
+    Season season; //attributes
+    double discount;
+};
+
+class Person { //class to get people's names
+public:
+    string firstName; //attributes
+    string lastName;
+    string email;
+    string credNum;
+};
+
+enum RoomType { //enum for comparing rooms
+    Single,
+    Double,
+    Triple,
+    Quad,
+    Queen,
+    King,
+    Twin,
+    Doubledouble
+};
+
+class roomStatus { //class to check room status
+public:
+    int week; //attributes
+    int roomID;
+    RoomType type;
+};
+
+class Room { //room class for info
+public:
+    int roomID; //attributes
+    RoomType type;
+    double roomCost;
+    int capacity;
+    bool isUnavailable;
+};
+
+class BookRoom { //class to check rooms that are booked
+public:
+    int roomID = 1; //attributes
+    int week = 0;
+    RoomType type = Single;
+    string email = "";
+};
+
+class roomTypeInfo { //class to check room status
+public:
+    RoomType type; //attributes
+    int availableRooms;
+    int bookedRooms;
+};
+
+class Hotel { //class that stores info on specific hotel
+public:
+    string hname;
+    list<Room> rooms; //dynamic array from the enum RoomType
+    list<BookRoom> Booked; //dynamic array from class BookRoom
+    list<Discount> seasonDiscount; //dynamic array for discounts
+
+    //gets information on rooms of selected hotel
+    list<roomTypeInfo> getRoomInfo() {
+        int index = 0; //index
+        int SingleRooms = 0; //variables for number of each type of room
+        int DoubleRooms = 0;
+        int TripleRooms = 0;
+        int QuadRooms = 0;
+        int QueenRooms = 0;
+        int KingRooms = 0;
+        int TwinRooms = 0;
+        int DoubledoubleRooms = 0;
+        list<Room>::iterator it = rooms.begin(); //iterator
+        do { //do-while loop for number of rooms
+            Room item = *it; //item variable from class Room equals to iterator
+            switch (item.type) { //switch item.type (attribute from Room)
+            case Single: //if item.type is a type of room and room is available, add to that type of room and break
+                if (!item.isUnavailable)  SingleRooms++;
+                break;
+            case Double:
+                if (!item.isUnavailable)  DoubleRooms++;
+                break;
+            case Triple:
+                if (!item.isUnavailable)  TripleRooms++;
+                break;
+            case Quad:
+                if (!item.isUnavailable)  QuadRooms++;
+                break;
+            case Queen:
+                if (!item.isUnavailable)  QueenRooms++;
+                break;
+            case King:
+                if (!item.isUnavailable)  KingRooms++;
+                break;
+            case Twin:
+                if (!item.isUnavailable)  TwinRooms++;
+                break;
+            case Doubledouble:
+                if (!item.isUnavailable)  DoubledoubleRooms++;
+                break;
+            }
+            advance(it, 1); //advance iterator by 1
+            index++; //increase index by 1
+        } while (index < rooms.size()); //condition: index is less than size of rooms
+
+        int BookedSingleRooms = 0; //variables for number of booked rooms of each type
+        int BookedDoubleRooms = 0;
+        int BookedTripleRooms = 0;
+        int BookedQuadRooms = 0;
+        int BookedQueenRooms = 0;
+        int BookedKingRooms = 0;
+        int BookedTwinRooms = 0;
+        int BookedDoubledoubleRooms = 0;
+
+        list<roomTypeInfo> result; //create dynamic array result from roomTypeInfo
+        //if the variables of type of room is greater than 0, creates object info from roomTypeInfo, 
+        //info.type is that type, 
+        //info.availableRooms is the type of room variable, 
+        //info.bookedRooms is the variable for number of booked rooms of each type
+        //then adds object info to result
+        if (SingleRooms > 0) { 
+            roomTypeInfo info;
+            info.type = Single;
+            info.availableRooms = SingleRooms;
+            info.bookedRooms = BookedSingleRooms;
+            result.push_back(info);
+        } 
+        if (DoubleRooms > 0) {
+            roomTypeInfo info;
+            info.type = Double;
+            info.availableRooms = DoubleRooms;
+            info.bookedRooms = BookedDoubleRooms;
+            result.push_back(info);
+        } 
+        if (TripleRooms > 0) {
+            roomTypeInfo info;
+            info.type = Triple;
+            info.availableRooms = TripleRooms;
+            info.bookedRooms = BookedTripleRooms;
+            result.push_back(info);
+        }
+        if (QuadRooms > 0) {
+            roomTypeInfo info;
+            info.type = Quad;
+            info.availableRooms = QuadRooms;
+            info.bookedRooms = BookedQuadRooms;
+            result.push_back(info);
+        }
+        if (QueenRooms > 0) {
+            roomTypeInfo info;
+            info.type = Queen;
+            info.availableRooms = QueenRooms;
+            info.bookedRooms = BookedQueenRooms;
+            result.push_back(info);
+        }
+        if (KingRooms > 0) {
+            roomTypeInfo info;
+            info.type = King;
+            info.availableRooms = KingRooms;
+            info.bookedRooms = BookedKingRooms;
+            result.push_back(info);
+        }
+        if (TwinRooms > 0) {
+            roomTypeInfo info;
+            info.type = Twin;
+            info.availableRooms = TwinRooms;
+            info.bookedRooms = BookedTwinRooms;
+            result.push_back(info);
+        }
+        if (DoubledoubleRooms > 0) {
+            roomTypeInfo info;
+            info.type = Doubledouble;
+            info.availableRooms = DoubledoubleRooms;
+            info.bookedRooms = BookedDoubledoubleRooms;
+            result.push_back(info);
+        }
+        return result; //returns result
+    }
+
+    //checks availability of rooms
+    bool checkRoomAvailability(int week, int numOfRooms, RoomType type, int availableRooms) {
+        if (Booked.empty()) return true; //if list BookRoom Booked is empty
+        list<BookRoom>::iterator it = Booked.begin(); //iterator
+        int unAvailableRooms = 0; //initialize number of unavailable rooms
+        int index = 0; //index
+        bool result = false; //bool set to false
+        do { //do-while loop
+            BookRoom item = *it; //variable equal to iterator
+            if (item.type == type && item.week == week) {
+                unAvailableRooms++; //if the item variable is equal to arguments, the number of unavailable rooms increases
+            }
+            advance(it, 1); //advance iterator by 1
+            index++; //increases index by 1
+        } while (index < Booked.size()); //condition: index less than size of Booked
+
+        if (availableRooms-unAvailableRooms > numOfRooms) {
+            result = true; //if the difference between available and unavailable room variables is bigger than total number of rooms, result is true
+        }
+        return result; //returns bool result
+    }
+
+    //check which season the weeks fall into
+    Season findSeason(int week) {
+        if (week < 14) { //returns different seasons based on range of int week
+            return Spring;
+        }
+        if (week > 13 && week < 27) {
+            return Summer;
+        }
+        if (week > 26 && week < 40) {
+            return Autumn;
+        }
+        if (week > 39) {
+            return Winter;
+        }
+    }
+
+    //calculate price
+    double getPrice(RoomType type, Season season) { //get price method
+        list<Discount>::iterator it = seasonDiscount.begin(); //create iterator
+        if (season > 0) {
+            advance(it, (season - 1)); //advance iterator by season - 1 (Season is enum, therefore season is a number)
+        }
+        Discount data = *it; //object data from class discount equals to iterator
+
+        return costsRooms[type] * data.discount; //returns costRooms based on type * the discount from data
+    }
+
+    double costCalculationByRoomType(int weekStart, int weekEnd, int numOfRooms, RoomType type) { //calculate cost by room type
+        double totalCost = 0.00; //initialize totalCost
+        for (int i = weekStart; i <= weekEnd; i++) { //for-loop for finding totalCost
+            double price = getPrice(type, findSeason(i)); //call getPrice with parameters
+            double cost = price * numOfRooms; //cost equals price times numOfRooms
+            totalCost += cost; //totalCost equals itself plus cost
+        }
+        return totalCost*1.13; //add tax (13%)
+    }
+
+    void addBookedRoom(BookRoom room) { //adds booked rooms
+        Booked.push_back(room);
+    }
+
+    void cleanBookedRooms(BookRoom room) {
+        //can be implemented later on
+    }
+
+    bool isRoomBooked(int roomID, int week) { //check if the room is booked
+        if (Booked.empty()) { //if Booked is empty, returns false
+            return false;
+        }
+        list<BookRoom> copy = Booked; //create copy of Booked
+        list<BookRoom>::iterator it = copy.begin(); //create iterator for copy
+        bool result = false; //result set to false
+        int index = 0; //index
+        do {  //do-while loop to check rooms
+            BookRoom item = *it; //object item from class BookRoom equals to iterator
+            if (item.week == week && item.roomID == roomID) { //if attributes of item equal to parameters, result is true, break
+                result = true;
+                break;
+            }
+            advance(it, 1); //advance iterator by 1
+            index++; //increase index by 1
+        } while (index < copy.size()); //condition: index is less than size of copy
+        return result; //return result
+    }
+
+    int findAvailableRoomFromType(RoomType type, int week) { //find available rooms from type
+        list<Room> copy = rooms; //create copy of rooms
+        list<Room>::iterator it = copy.begin(); //iterator for copy
+        int index = 0; //index
+        int roomID; //roomID, initialized
+        do { //do-while loop to find room
+            Room item = *it; //object item from class Room equals to iterator
+            if (!isRoomBooked(item.roomID, week)) { //calls isRoomBooked, if opposite, roomID equals item.roomID then break
+                roomID = item.roomID;
+                break;
+            }
+            advance(it, 1); //advance iterator by 1
+            index++; //increase index by 1
+        } while (index<copy.size()); //condition: index is less than size of copy
+        return roomID; //return roomID
+    }
+    
+};
+
+class Hotels { //class that stores all hotels
+public:
+    list<Hotel> hotels; //dynamic array to store hotels
+    
+    //method to list all hotel names
+    list<string> listHotels() { //list all named hotels
+        list<Hotel>::iterator it = hotels.begin(); //iterator for hotels
+        list<string> result; //dynamic array result
+        int index = 0; //index
+        do { //do-while loop to list hotels
+            Hotel item = *it; //object item from class Hotel equals iterator
+            result.push_back(item.hname); //place item.hname into result
+            advance(it, 1); //advance iterator by 1
+            index++; //increase index by 1
+        } while (index < hotels.size()); //condition: index is less than size of hotels
+        return result; //return result array
+    };
+
+    //method to get hotel by user-input
+    Hotel getHotelByName(string hname) {
+        list<Hotel>::iterator it = hotels.begin(); //iterator for hotels
+        list<string> result; //dynamic array result
+        int index = 0; //index
+        bool isFound = false; //bool set to false
+        Hotel item; //create object item from class Hotel
+        do { //do-while loop for getting hotel names
+            item = *it; //item equals iterator
+            if (item.hname == hname) { //if item.hname equals hname (argument), bool is true and breaks
+                isFound = true;
+                break;
+            } 
+            advance(it, 1); //advance iterator by 1
+            index++; //increases index by 1
+        } while (index < hotels.size()); //condition: index less than size of hotels
+        if(isFound) return item; //if bool is true, return item, otherwise call returnNull function
+        Hotel emptyHotel;
+        return emptyHotel;
+    }
+};
+
+class RoomsBooked { //check rooms that are booked
+public: 
+    int rooms; //attributes
+    RoomType type;
+    double cost;
+};
+
+class Reservation { //check reservation and add the rooms that were booked
+public:
+    Person person; //attributes
+    int weekStart = 0;
+    int weekEnd = 0;
+    string hotelName;
+    list<RoomsBooked> roomsBooked;
+    double cost;
+    //method to add booked rooms
+    void addRoomsBooked(RoomsBooked booked) {
+        roomsBooked.push_back(booked);
+    }
+
+};
+
+class HotelsReservation : public Hotels { //derived class from Hotels
+private:
+    list<Reservation> reservationList; //attributes
+public:
+    void addReservation(Reservation reservation) { //add reservation to list
+        reservationList.push_back(reservation);
+    }
+
+    Reservation getReservation(string email) {
+        //can be implemented later on
+    }
+
+    //update myHotel using info from Hotel
+    void updateMyHotel(Hotel hotel) {
+    // iterator
+    list<Hotel>::iterator it = hotels.begin();
+    // index
+    int index = 0;
+    do {                // do-while loop
+      Hotel item = *it; // item equals to iterator
+      if (item.hname == hotel.hname) { // if item hotel name equals to parameter's hotel name
+        hotels.insert(it, hotel); // inserts hotel and iterator into hotels
+        hotels.erase(it);         // removes iterator and breaks
+        break;
+      }
+      advance(it, 1);                // advance iterator by 1
+      index++;                       // increase index by 1
+    } while (index < hotels.size()); // condition: index less than size of hotels
+  }
+};
+
+
+//create an object
+HotelsReservation myHotel;
+
+//create function for generate list
+int getCapacity(int type) {
+    switch (type) {
+    case 0: return 1;
+    case 1: return 2;
+    case 2: return 3;
+    default: return 4;
+    };
+}
+
+//create function for rooms
+void setupRooms(Hotel& hotel, RoomType type, int numOfRooms) {
+    int index = hotel.rooms.size()+1; //index set to size of rooms in object hotel + 1
+    Room room; //object room from class Room
+    for (int j = 0; j < numOfRooms; j++) { //for-loop to get rooms set up
+        room.roomID = index + j; //room.roomID equals to sum of index + j
+        room.type = type; //room.type equals to type
+        room.isUnavailable = false; //bool is false (room is available)
+        room.roomCost = costsRooms[(int)type]; //room.roomCost equals to costRooms array based on type (different)
+        room.capacity = getCapacity((int)type); //room.capacity equals to getCapacity function
+        hotel.rooms.push_back(room); //place room into hotel.rooms
+    }
+}
+    
+//method to get season discount
+list<Discount> getDiscount(Hotel& hotel) {
+    list<Discount> discounts; //dynamic array discounts
+    //create objects seasons from class Discount, then declare values of each attribute
+    Discount springSeason;
+    springSeason.season = Spring;
+    springSeason.discount = 1.2;
+
+    Discount summerSeason;
+    summerSeason.season = Summer;
+    summerSeason.discount = 0.85;
+
+    Discount autumnSeason;
+    autumnSeason.season = Autumn;
+    autumnSeason.discount = 0.9;
+
+    Discount winterSeason;
+    winterSeason.season = Winter;
+    winterSeason.discount = 0.7;
+
+    //place into hotel
+    hotel.seasonDiscount.push_back(springSeason);
+    hotel.seasonDiscount.push_back(summerSeason);
+    hotel.seasonDiscount.push_back(autumnSeason);
+    hotel.seasonDiscount.push_back(winterSeason);
+
+    return discounts; //return discounts array
+}
+
+//create function to set up each hotel; sample
+void setupHotel(string hotelName) {
+    Hotel hotel; //create object
+    hotel.hname = hotelName; //set object name to parameter
+
+    setupRooms(hotel, Single, 20); //call setupRooms to create rooms for hotel
+    setupRooms(hotel, Double, 40);
+    setupRooms(hotel, Triple, 30);
+    setupRooms(hotel, Quad, 10);
+    if (hotel.rooms.size() > maxNumOfRooms) { //if exceeds max number (from global information on top), this happens
+        cout << "Error, too many rooms set up!";
+    }
+    getDiscount(hotel); //call getDiscount to get discount
+    myHotel.hotels.push_back(hotel); //adds to object myHotels
+    
+}
+
+//create more hotels using the format above
+void setupHotelOne(string hotelName) {
+    Hotel hotel;
+    hotel.hname = hotelName;
+
+    setupRooms(hotel, Single, 40); //different rooms, same function called
+    setupRooms(hotel, Queen, 40);
+    setupRooms(hotel, King, 70);
+    if (hotel.rooms.size() > maxNumOfRooms) {
+        cout << "Error, too many rooms set up!";
+    }
+    getDiscount(hotel);
+    myHotel.hotels.push_back(hotel);
+     //call discount function
+}
+
+void setupHotelTwo(string hotelName) {
+    Hotel hotel;
+    hotel.hname = hotelName;
+
+    setupRooms(hotel, Single, 50);
+    setupRooms(hotel, Double, 35);
+    setupRooms(hotel, Twin, 45);
+    setupRooms(hotel, Doubledouble, 20);
+    if (hotel.rooms.size() > maxNumOfRooms) {
+        cout << "Error, too many rooms set up!";
+    }
+    getDiscount(hotel);
+    myHotel.hotels.push_back(hotel);
+    
+}
+
+void setupHotelThree(string hotelName) {
+    Hotel hotel;
+    hotel.hname = hotelName;
+
+    setupRooms(hotel, Single, 20);
+    setupRooms(hotel, Double, 40);
+    setupRooms(hotel, Triple, 40);
+    if (hotel.rooms.size() > maxNumOfRooms) {
+        cout << "Error, too many rooms set up!";
+    }
+    getDiscount(hotel);
+    myHotel.hotels.push_back(hotel);
+    
+}
+
+//display information
+string displayHotelInfo(list<string> data) { //displays info on selected hotel
+    list<string>::iterator it = data.begin(); //iterator
+    string output = ""; //initialize the output
+    int index = 0; //index
+    do { //do-while loop
+        string item = *it; //variable equals iterator
+        output += to_string(index+1) +" : " + item + ";   "; //output with format
+        advance(it, 1); //advance iterator by 1
+        index++; //index increases
+    } while (index < data.size()); //condition: index less than size of argument
+    output += "\n Please select a hotel by number: \n"; //formatting output
+    return output; //return output
+}
+
+string displayRoomInfo(list<roomTypeInfo> data) { //display all room info of select hotel
+    list<roomTypeInfo>::iterator it = data.begin(); //iterator
+    string output = ""; //initialize output
+    int index = 0; //index counter
+    do { //create do/while loop to output the room info
+        roomTypeInfo item = *it;
+        output += to_string(index + 1) + " : " + rooms[item.type] + " " +
+            to_string(item.availableRooms-item.bookedRooms) + "/" 
+            + to_string(item.availableRooms) + ";   "; //output with format
+        advance(it, 1); //advance iterator
+        index++; //increase index number by 1 each loop
+    } while (index < data.size()); //condition: index is less than the size of the argument
+    return output; //returns output
+}
+
+//get other elements (room type info, check availability, updated booking status)
+roomTypeInfo getRoomTypeInfo(int selectType, list<roomTypeInfo> roomsInfo) { //get room type info
+    list<roomTypeInfo>::iterator it = roomsInfo.begin(); //separate iterator
+    int index = 0; //index
+    bool isFound = false; //remove?
+    roomTypeInfo item; //variable containing the information on rooms
+    item = *it; //variable equals to iterator
+    if ((selectType - 1) > 0) { //if selectType - 1 > 0
+        advance(it, (selectType - 1)); //move iterator one space to the next element
+    }
+    return *it; //returns *it
+}
+
+bool checkRoomsAvailable(int numofRooms, list<roomTypeInfo> roomsInfo) { //boolean check if a room is available
+    list<roomTypeInfo>::iterator it = roomsInfo.begin(); //iterator
+    bool output = false; //set output = false
+    int index = 0; //index
+    do { //do-while loop
+        roomTypeInfo item = *it; //roomTypeInfo item variable is equal to iterator
+        int availableRooms = item.availableRooms-item.bookedRooms; //number of availlable rooms = difference
+        if (availableRooms<=numofRooms) { //if available rooms = number of total rooms
+            output = true;
+            break; //breaks do-while function
+        }
+        advance(it, 1); //otherwise advance iterator by 1
+        index++; //increases index count
+    } while (index < roomsInfo.size()); //condition: index less than the size of roomsInfo
+    return output; //return bool output
+}
+
+void updateBookedRoomStatus(string email, int week, int selectTypes[], int numberOfRooms[], Hotel& hotel) { //method to update number of rooms booked
+    for (int i = 0; i < 8; i++) { //for-loop for checking Booked Room Status
+        int type = selectTypes[i]; //type equals to selectTypes array at i
+        if (type<0 || type>7) { //if type not 1-7, breaks
+            break;
+        }
+        int bookedRooms = numberOfRooms[i]; //variable bookedRooms equals to numberofRooms array at i
+        for (int j = 0; j < bookedRooms; j++) { //second for-loop
+            int roomID = hotel.findAvailableRoomFromType((RoomType) type, week); //call findAvailableRoomFromType function from hotel
+            BookRoom bookRoom; //create object bookRoom from class BookRoom
+            bookRoom.roomID = roomID; //attributes are equal to the elements
+            bookRoom.type = (RoomType)type; //change type to RoomType type (different from int type)
+            bookRoom.week = week;
+            bookRoom.email = email;
+            hotel.addBookedRoom(bookRoom); //call addBookedRoom function from hotel
+        }
+    }
+}
+
+//menus
+void submenu(Hotel& hotel) { //submenu
+    list<roomTypeInfo> roomsInfo = hotel.getRoomInfo(); //call getRoomInfo from Object hotel
+    cout << "Spring includes Weeks 1-13, Summer includes Weeks 14-26, \n" 
+        "Autumn includes Weeks 27 - 39, Winter includes Weeks 40 - 52. \n";
+
+    cout << "\nSelect your reservation start and end weeks (1-52). \n" 
+        "If the start week is bigger than end week, the default duration is the start week : \n";
+    int weekStart; //input variables
+    int weekEnd;
+    do { //do-while loop
+        cout << "Week start: ";
+        cin >> weekStart; //user-inputs
+        cout << "Week end: ";
+        cin >> weekEnd;
+    } while (weekStart<1 || weekStart>52); //condition: weekStart is in range of number of weeks in a year
+    if (weekEnd < weekStart) {
+        weekEnd = weekStart; //default if end week is less than start week
+    }
+    if (weekEnd > 52) {
+        weekEnd = 52; //default if end week is bigher than week 52
+    }
+    cout << "Start week: "<<weekStart; //outputs
+    cout << "\nEnd week: " << weekEnd;
+    cout << "\n\n";
+    cout << displayRoomInfo(roomsInfo); //calls displayRoomInfo with roomsInfo as an argument
+    cout << "\nPlease select the types of room you want to book: \n";
+    int selectTypes[8]; //input variables
+    int selectType = 0;
+    int numberOfRooms[8];
+    int numberOfBooked = 0;
+    bool isValid = true; //bool variable
+    int index = 0; //index
+    do { //do-while loop
+        cout << "Type of Room (0 to exit): ";
+        cin >> selectType; //user-input to select type of room from displayRoomInfo
+        if (selectType == 0) {
+            break; //exits loop
+        }
+        cout << "Number of Rooms Booked: ";
+        cin >> numberOfBooked; //user-input
+        
+        roomTypeInfo item = getRoomTypeInfo(selectType, roomsInfo); //calls getRoomTypeInfo with parameters, creates variable
+
+        for (int i = weekStart; i <= weekEnd; i++) { //for-loop to check if the room is available
+            if (isValid) { //if isValid is true
+               isValid = hotel.checkRoomAvailability(i, numberOfBooked, item.type, item.availableRooms); //calls checkRoomAvailability with parameters
+            }
+            else { //if isValid becomes false, breaks
+                break;
+            }
+        }
+
+        if (isValid) { //if isValid is still true
+            selectTypes[index] = item.type; //selectTypes array includes the room type
+            numberOfRooms[index] = numberOfBooked; //number of rooms index includes the user-input number of rooms
+            index++; //index increases
+        }
+        else { //if isValid is false
+            cout << "\nThe room and/or type is unavailable. Please try again!\n";
+        }
+        
+    } while (selectType>0); //condition: selectType is bigger than 0
+    cout << "\n\n";
+    //storing user info
+    string fname, lname, email, credCard; //user-input variables
+    bool isValidTwo = true; //different bool variable
+    do { //do-while loop
+        cout << "Enter your last name: \n";
+        cin >> lname; //user-input last name, first name, email, credit card number
+
+        cout << "\nEnter your first name: \n";
+        cin >> fname;
+
+        cout << "\nEnter your email: \n";
+        cin >> email;
+
+        cout << "\nEnter your credit card number: \n";
+        cin >> credCard;
+
+        if (email.empty()) { //if email is empty, isValid is false
+            isValidTwo = false;
+            cout << "Email is required. Try Again!";
+        }
+        if (credCard.empty()) { //if credCard is empty, isValid is false
+            isValidTwo = false;
+            cout << "Credit Card is required. Try Again!";
+        }
+    } while (!isValidTwo); //condition: isValidTwo is not true
+
+    Person user; //object user
+    user.firstName = fname; //user-inputs become attributed and stored into object
+    user.lastName = lname;
+    user.email = email;
+    user.credNum = credCard;
+
+    double totalCost = 0.00; //initialize total cost
+    double cost[8] = {}; //cost array
+    int totalRoomsBooked = 0; //initialize total rooms booked
+    for (int i = 0; i < sizeof(selectTypes); i++) { //for-loop  for calculating cost
+        int type = selectTypes[i]; //type equals to element of array at i
+        int numOfRooms = numberOfRooms[i]; //number of rooms equals to element of array at i
+        if (type < 0 || type>7) { //if type is not 0-7, breaks for-loop
+            break;
+        }
+        totalRoomsBooked += numberOfRooms[i]; //totalRoomsBooked is equal to itself + number of rooms at array i
+        cost[i] = hotel.costCalculationByRoomType(weekStart, weekEnd, numOfRooms, (RoomType)type); //call costCalculationByRoomType from object hotel and store inside the array cost at element i
+
+        totalCost += cost[i]; //totalCost + cost[i] = totalCost (new)
+    }
+    //output: 
+    cout << "\n\nReservation Results: \n";
+    cout << "Name: " << fname <<" "<<lname;
+    cout << ";  Email: "<<email;
+    cout << ";  Credit Info: "<<credCard;
+    cout << "\nStart Week: "<<weekStart;
+    cout << ";  End Week: "<<weekEnd;
+    cout << "\nHotel Name: "<< hotel.hname;
+    cout << ";  Total Cost: $" << ceil(totalCost*100.00)/100.00;
+    cout << "\n";
+    for (int i = 0; i < sizeof(selectTypes); i++) { //for-loop
+        int type = selectTypes[i]; //type equals to element of array at i (different type)
+        if (type < 0 || type>7) { //if type is not 0-7, breaks for-loop
+            break;
+        }
+        cout << "Room Type: "<<rooms[type]; //outputs rooms at element type
+        cout << ";  Number of Rooms: "<< numberOfRooms[i]; //outputs number of rooms at element i
+        cout << ";  Cost: $" << ceil(cost[i] * 100.00) / 100.00; //outputs cost at element i
+        cout << "\n";
+    }
+    //confirmation
+    char confirmation = ' '; //intialize confirmation
+    bool isConfirmed = false; //initialize bool
+    do { //do-while loop
+        cout << "\nCheck all information above. Please confirm the reservation; enter 'y' for yes and 'n' for no: ";
+        cin >> confirmation; //user-input
+        if (confirmation == 'y' || confirmation == 'Y') { //if user inputs y or n, do-while loop ends
+            isConfirmed = true;
+        }
+        if (confirmation == 'n' || confirmation == 'N') {
+            isConfirmed = true;
+        }
+    } while (!isConfirmed); //condition: isConfirmed is not false
+
+    if (confirmation == 'y' || confirmation == 'Y') { //if confirmation is 'y', creates object userReservation from class Reservation
+        Reservation userReservation; //create userReservation
+        userReservation.weekStart = weekStart; //user-input weekStart, weekEnd equals attributes
+        userReservation.weekEnd = weekEnd;
+        userReservation.person = user; //object user equals person attribute of userReservation
+        userReservation.hotelName = hotel.hname; //object hotel with hotel name equals hotelName attribute of userReservation
+        userReservation.cost = totalCost; //totalCost equals cost attribute of userReservation
+        for (int i = 0; i < sizeof(selectTypes); i++) { //for-loop
+            int type = selectTypes[i]; //type equals element in array selectTypes at i (different type)
+            if (type < 0 || type>7) { //if type is not 0-7, breaks for-loop
+                break;
+            }
+            RoomsBooked room; //create object room from class RoomsBooked
+            room.type = (RoomType)type; //change type to RoomType type and make it equal to room.type
+            room.rooms = numberOfRooms[i]; //number of rooms at element i is room.rooms
+            room.cost = cost[i]; //cost at element i is room.cost
+            userReservation.addRoomsBooked(room); //calls addRoomsBooked method to store
+        }
+
+        myHotel.addReservation(userReservation); //calls addReservation from myHotel with userReservation as argument
+
+        for (int i = weekStart; i < weekEnd; i++) { //for-loop
+            updateBookedRoomStatus(user.email, i, selectTypes, numberOfRooms, hotel); //calls updateBookedRoomStatus with arguments
+        }
+        myHotel.updateMyHotel(hotel);
+        cout << "***** Reservation Finished *****\n\n"; //end
+    }
+}
+
+void menu() { //introduction
+    cout << "Welcome to Spring Break R Us Travel Service Program! To begin, "
+        "please select a hotel from the list below!\n\n";
+    cout << "To exit, type 0: \n\n";
+    //list hotel names
+    int input;
+    list<string> nameOfHotel = myHotel.listHotels(); //store names
+    do { //do-while loop
+        cout << displayHotelInfo(nameOfHotel); //call displayHotelInfo function
+        cin >> input; //user-input
+        list<string>::iterator it = nameOfHotel.begin(); //iterator
+        if (input > nameOfHotel.size() || input<1) { //if user-input is not 1, 2, 3
+            cout << "Please input a valid number! \n\n";
+            continue; //back to iterator
+        }
+        advance(it, input-1); //advances iterator by input-1
+        Hotel hotel = myHotel.getHotelByName(*it); //calls getHotelByName under myHotel
+        submenu(hotel); //calls submenu with object hotel
+    } while (input!=0); //condition: input is not 0 (0 means exit)
+}
+
+int main()
+{
+    //call setupHotel functions
+    setupHotelOne("Olde Hotel");
+    setupHotelTwo("Comfort Inn");
+    setupHotelThree("Walnut Hotel");
+    //calls menu
+    menu();
+}
