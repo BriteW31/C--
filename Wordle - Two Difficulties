@@ -1,0 +1,75 @@
+#include <iostream>
+#include <bits/stdc++.h>
+#include <cstdlib>
+#include <ctime>
+#include <string>
+
+using namespace std;
+//goal: to create a program to play a very simplified and advanced version of hangman
+
+void game(string input){ //simplified version
+  string wordAttempts[6];
+  cout<<"Guess the word: \n";
+  for (int x = 1; x<=6; x++){
+    cin>>wordAttempts[x];
+    if (wordAttempts[x] == input){
+      cout<<"You win!!!";
+      break;
+    }
+    else if(wordAttempts[x] != input){
+      cout<<"Incorrect. Chances used: "<<x<<"\n";
+    }
+    if (x == 6){
+      cout<<"Game over!";
+    }
+  }
+}
+
+void gameHarder(string input) {  //advanced version
+    string guess, underscore = string(input.size(), '_');
+    cout << underscore << "\nThere are "<< underscore.length() << " letters in the word\n";
+    cout << "Guess the word: \n";
+
+    for (int i = 1; i <= 6; i++) {
+        cin >> guess;
+
+        for (size_t x = 0, iend = min(input.size(), guess.size()); x <= iend; x++) {
+            if (input[x] == guess[x]) {
+                underscore[x] = input[x];
+            }
+        }
+        cout << underscore << "\n";
+        //if you get the guess right
+        if (guess == input) {
+            cout << "You win!";
+            break;
+        }
+
+
+        //if you get the guess wrong and have no more attempts
+        if (guess != input && i == 6) {
+            cout << "Game Over!";
+            break;
+        }
+    }
+
+}
+
+int main() {
+    string input;
+    int selection;
+    cout << "Enter a word: \n";
+    cin >> input;
+    for (int i = 0; i < 40; i++) {
+        cout << "\n";
+    }
+    cout << "Choose difficulty - 1 is easier, 2 is harder";
+    cin >> selection;
+    if (selection == 1) {
+        game(input);
+    }
+    else if (selection == 2) {
+        gameHarder(input);
+    }
+
+}
